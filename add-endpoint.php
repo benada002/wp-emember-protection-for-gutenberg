@@ -11,21 +11,30 @@ class GEP_Add_Enpoint{
      */
     private $wpdb;
 
+    /**
+     * Namespace for the Endpoint
+     *
+     * @var string
+     */
+    private $namespace;
+
     function __construct(){
         global $wpdb;
         $this->wpdb = $wpdb;
+
+        $this->namespace = 'gepemebergutenberg/v1';
 
         add_action('rest_api_init', array($this, 'add_enpoints'));
     }
 
     public function add_enpoints(){
-        register_rest_route( 'gepemebergutenberg/v1', '/levels/', array(
+        register_rest_route( $this->namespace, '/levels/', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_levels'),
             'permission_callback' => array($this, 'user_is_permitted')
           ) );
 
-        register_rest_route( 'gepemebergutenberg/v1', '/members/', array(
+        register_rest_route( $this->namespace, '/members/', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_members'),
             'permission_callback' => array($this, 'user_is_permitted')
