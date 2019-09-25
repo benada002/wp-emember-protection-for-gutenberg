@@ -1,0 +1,67 @@
+<?php
+if(!defined('ABSPATH')) exit;
+
+global $wpdb;
+
+class GEP_Add_Enpoint{
+    /**
+     * WP DB Instance
+     *
+     * @var object
+     */
+    private $wpdb;
+
+    function __construct(){
+        global $wpdb;
+        $this->wpdb = $wpdb;
+
+        add_action('rest_api_init', array($this, 'add_enpoints'));
+    }
+
+    public function add_enpoints(){
+        register_rest_route( 'gepemebergutenberg/v1', '/levels/', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_levels'),
+            'permission_callback' => array($this, 'user_is_permitted')
+          ) );
+
+        register_rest_route( 'gepemebergutenberg/v1', '/members/', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_members'),
+            'permission_callback' => array($this, 'user_is_permitted')
+        ) );
+    }
+
+    private function create_response($to_transform, $label, $value){
+        $response = array();
+
+        foreach($to_transform as $key => $val){
+            $response[] = array(
+                'value' => $val->{$value},
+                'label' => $val->{$label}
+            );
+        }
+
+        return $response;
+    }
+
+    public function user_is_permitted(){
+        return current_user_can( 'list_users' );
+    }
+
+    public function get_levels(){
+        $levels = $this->wpdb->get_results("SELECT id, alias FROM {$this->wpdb->prefix}wp_eMember_membership_tbl WHERE id > 1");
+        $response = $this->create_response($levels, 'alias', 'id');
+
+        return $response;
+    }
+
+    public function get_members(){
+        $members = $this->wpdb->get_results("SELECT member_id, user_name FROM {$this->wpdb->prefix}wp_eMember_members_tbl");
+        $response = $this->create_response($members, 'user_name', 'member_id');
+
+        return $response;
+    }
+}
+
+new GEP_Add_Enpoint();

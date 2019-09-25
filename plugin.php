@@ -10,11 +10,13 @@
 
 if(!defined('ABSPATH')) exit;
 
+include_once plugin_dir_path( __FILE__ ) . 'add-endpoint.php';
+
 function gep_block_assets() { // phpcs:ignore
 	wp_enqueue_script(
         'plu-js',
         plugins_url( '/dist/index.js', __FILE__ ),
-        ['wp-compose', 'wp-hooks', 'wp-editor', 'wp-element', 'wp-components']
+        ['wp-compose', 'wp-hooks', 'wp-editor', 'wp-element', 'wp-components', 'wp-api-fetch']
     );
 }
 add_action( 'enqueue_block_editor_assets', 'gep_block_assets' );

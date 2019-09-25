@@ -1,5 +1,5 @@
 const { addFilter } = wp.hooks;
-const { createHigherOrderComponent } = wp.compose;
+const { createHigherOrderComponent, withState } = wp.compose;
 const { Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
 const {
@@ -7,8 +7,13 @@ const {
   SelectControl,
   ToggleControl,
   TextControl,
-  TextareaControl
+  TextareaControl,
+  FormTokenField
 } = wp.components;
+const apiFetch = wp.apiFetch;
+
+import React, { useState, useEffect } from "react";
+import SelectControlSearch from "./components/select";
 
 const ememberScope = [
   { value: "", label: "Not Set" },
@@ -16,6 +21,22 @@ const ememberScope = [
   { value: "not_logged_in_users_only", label: "Not logged in users only" },
   { value: "expired", label: "Expired members only" }
 ];
+
+const MyFormTokenField = withState({
+  tokens: [],
+  suggestions: ememberScope.map(ele => ele.label)
+})(({ tokens, suggestions, setState }) => (
+  <FormTokenField
+    value={tokens}
+    suggestions={suggestions}
+    onChange={tokens => {
+      console.log(tokens);
+      setState({ tokens });
+    }}
+    placeholder="Type a continent"
+    isExpanded={true}
+  />
+));
 
 const addEmemberControlAttribute = settings => {
   settings.attributes = {
@@ -27,9 +48,9 @@ const addEmemberControlAttribute = settings => {
     ememberProtectAttrs: {
       type: "object",
       default: {
-        for: "",
-        not_for: "",
-        member_id: "",
+        for: [],
+        not_for: [],
+        member_id: [],
         scope: ememberScope[0].value,
         do_not_show_restricted_msg: false,
         do_not_show_expired_msg: false,
@@ -47,15 +68,47 @@ addFilter(
   addEmemberControlAttribute
 );
 
-const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
-  return props => {
+const ememberProtectionControlls = createHigherOrderComponent(
+  BlockEdit => props => {
     const { ememberProtect, ememberProtectAttrs } = props.attributes;
     const { setAttributes } = props;
+
+    const [levels, setLevels] = useState([]);
+    const [forLevels, setForLevels] = useState([]);
+    const [notForLevels, setNotForLevels] = useState([]);
+    const [members, setMembers] = useState([]);
+
+    function filtlerOptions(setValues, setFunction) {
+      setFunction(() => [
+        ...levels.filter(({ value }) => setValues.indexOf(value) === -1)
+      ]);
+    }
+
     function saveObject(key, value) {
       setAttributes({
         ememberProtectAttrs: { ...ememberProtectAttrs, [key]: value }
       });
     }
+
+    function saveObjectAndFilterOptions(key, value, saveFilteredOptions) {
+      saveObject(key, value);
+      filtlerOptions(value, saveFilteredOptions);
+    }
+
+    useEffect(async () => {
+      const level = await apiFetch({ path: "gepemebergutenberg/v1/levels/" });
+      setLevels(level);
+
+      const member = await apiFetch({ path: "gepemebergutenberg/v1/members/" });
+      setMembers(member);
+    }, []);
+
+    useEffect(() => {
+      if (levels.length > 0) {
+        filtlerOptions(ememberProtectAttrs.not_for, setForLevels);
+        filtlerOptions(ememberProtectAttrs.for, setNotForLevels);
+      }
+    }, [levels, ememberProtectAttrs]);
 
     return (
       <Fragment>
@@ -72,24 +125,34 @@ const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
               }}
             />
             {ememberProtect && (
-              <TextControl
-                label="Show for level(s)"
+              <SelectControlSearch
+                label="For Levels"
+                name="for-level"
                 value={ememberProtectAttrs.for}
-                onChange={For => saveObject("for", For)}
+                options={forLevels}
+                onChange={For =>
+                  saveObjectAndFilterOptions("for", For, setNotForLevels)
+                }
               />
             )}
             {ememberProtect && (
-              <TextControl
-                label="Hide for level(s)"
+              <SelectControlSearch
+                label="Hide for Levels"
+                name="not-for-level"
                 value={ememberProtectAttrs.not_for}
-                onChange={not_for => saveObject("not_for", not_for)}
+                options={notForLevels}
+                onChange={not_for =>
+                  saveObjectAndFilterOptions("not_for", not_for, setForLevels)
+                }
               />
             )}
             {ememberProtect && (
-              <TextControl
-                label="Show for member(s)"
+              <SelectControlSearch
+                label="For Members"
+                name="for-level"
                 value={ememberProtectAttrs.member_id}
-                onChange={member_id => saveObject("member_id", member_id)}
+                options={members}
+                onChange={member => saveObject("member_id", member)}
               />
             )}
             {ememberProtect && (
@@ -135,8 +198,9 @@ const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
         </InspectorControls>
       </Fragment>
     );
-  };
-}, "ememberProtectionControlls");
+  },
+  "ememberProtectionControlls"
+);
 
 addFilter(
   "editor.BlockEdit",
