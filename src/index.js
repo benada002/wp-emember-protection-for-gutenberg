@@ -1,18 +1,17 @@
+import React, { useState, useEffect } from "react";
+
 const { addFilter } = wp.hooks;
-const { createHigherOrderComponent, withState } = wp.compose;
+const { createHigherOrderComponent } = wp.compose;
 const { Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
 const {
   PanelBody,
   SelectControl,
   ToggleControl,
-  TextControl,
-  TextareaControl,
-  FormTokenField
+  TextareaControl
 } = wp.components;
 const apiFetch = wp.apiFetch;
 
-import React, { useState, useEffect } from "react";
 import SelectControlSearch from "./components/select";
 
 const ememberScope = [
@@ -21,22 +20,6 @@ const ememberScope = [
   { value: "not_logged_in_users_only", label: "Not logged in users only" },
   { value: "expired", label: "Expired members only" }
 ];
-
-const MyFormTokenField = withState({
-  tokens: [],
-  suggestions: ememberScope.map(ele => ele.label)
-})(({ tokens, suggestions, setState }) => (
-  <FormTokenField
-    value={tokens}
-    suggestions={suggestions}
-    onChange={tokens => {
-      console.log(tokens);
-      setState({ tokens });
-    }}
-    placeholder="Type a continent"
-    isExpanded={true}
-  />
-));
 
 const addEmemberControlAttribute = settings => {
   settings.attributes = {
@@ -96,11 +79,17 @@ const ememberProtectionControlls = createHigherOrderComponent(
     }
 
     useEffect(async () => {
-      const level = await apiFetch({ path: "gepemebergutenberg/v1/levels/" });
-      setLevels(level);
+      try {
+        const level = await apiFetch({ path: "gepemebergutenberg/v1/levels/" });
+        setLevels(level);
 
-      const member = await apiFetch({ path: "gepemebergutenberg/v1/members/" });
-      setMembers(member);
+        const member = await apiFetch({
+          path: "gepemebergutenberg/v1/members/"
+        });
+        setMembers(member);
+      } catch (err) {
+        console.error(err);
+      }
     }, []);
 
     useEffect(() => {

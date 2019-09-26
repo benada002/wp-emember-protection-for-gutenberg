@@ -2,6 +2,7 @@ import React, { Component, createRef } from "react";
 
 import InputField from "./input-field";
 import Dropdown from "./dropdown";
+
 let instance = 0;
 
 class SelectControlSearch extends Component {

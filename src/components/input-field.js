@@ -1,7 +1,6 @@
 import React, { Component, createRef } from "react";
 import AutosizeInput from "react-input-autosize";
-
-const { IconButton } = wp.components;
+import { IconButton } from "@wordpress/components";
 
 import Tag from "./tag";
 

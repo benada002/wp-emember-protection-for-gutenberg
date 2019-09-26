@@ -2064,7 +2064,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var react_input_autosize__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-input-autosize */ "./node_modules/react-input-autosize/lib/AutosizeInput.js");
 /* harmony import */ var react_input_autosize__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_input_autosize__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./tag */ "./src/components/tag.js");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _tag__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tag */ "./src/components/tag.js");
 
 
 
@@ -2073,7 +2075,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var IconButton = wp.components.IconButton;
+
 
 
 var InputField =
@@ -2132,7 +2134,7 @@ function (_Component) {
           flexWrap: "wrap"
         }
       }, this.props.selectedItems.length > 0 && this.props.selectedItems.map(function (ele) {
-        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_tag__WEBPACK_IMPORTED_MODULE_8__["default"], {
+        return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_tag__WEBPACK_IMPORTED_MODULE_9__["default"], {
           deleteSelectedItem: function deleteSelectedItem(value) {
             return _this2.deleteSelectedItem(value);
           },
@@ -2145,7 +2147,7 @@ function (_Component) {
         },
         value: this.props.searchValue,
         ref: this.searchRef
-      })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(IconButton, {
+      })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__["IconButton"], {
         icon: this.props.dropdownHide ? "arrow-down" : "arrow-up",
         onClick: function onClick() {
           return _this2.toggleDropdown();
@@ -2363,6 +2365,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__);
 
 
 
@@ -2370,7 +2374,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var IconButton = wp.components.IconButton;
+
 
 var Tag =
 /*#__PURE__*/
@@ -2400,7 +2404,7 @@ function (_Component) {
         }
       }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("span", {
         className: "components-form-token-field__token-text"
-      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("span", null, this.props.element.label)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(IconButton, {
+      }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])("span", null, this.props.element.label)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__["IconButton"], {
         className: "components-form-token-field__remove-token",
         icon: "dismiss",
         label: this.props.element.label,
@@ -2453,21 +2457,17 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+
 var addFilter = wp.hooks.addFilter;
-var _wp$compose = wp.compose,
-    createHigherOrderComponent = _wp$compose.createHigherOrderComponent,
-    withState = _wp$compose.withState;
+var createHigherOrderComponent = wp.compose.createHigherOrderComponent;
 var Fragment = wp.element.Fragment;
 var InspectorControls = wp.editor.InspectorControls;
 var _wp$components = wp.components,
     PanelBody = _wp$components.PanelBody,
     SelectControl = _wp$components.SelectControl,
     ToggleControl = _wp$components.ToggleControl,
-    TextControl = _wp$components.TextControl,
-    TextareaControl = _wp$components.TextareaControl,
-    FormTokenField = _wp$components.FormTokenField;
+    TextareaControl = _wp$components.TextareaControl;
 var apiFetch = wp.apiFetch;
-
 
 var ememberScope = [{
   value: "",
@@ -2482,28 +2482,6 @@ var ememberScope = [{
   value: "expired",
   label: "Expired members only"
 }];
-var MyFormTokenField = withState({
-  tokens: [],
-  suggestions: ememberScope.map(function (ele) {
-    return ele.label;
-  })
-})(function (_ref) {
-  var tokens = _ref.tokens,
-      suggestions = _ref.suggestions,
-      setState = _ref.setState;
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_5__["createElement"])(FormTokenField, {
-    value: tokens,
-    suggestions: suggestions,
-    onChange: function onChange(tokens) {
-      console.log(tokens);
-      setState({
-        tokens: tokens
-      });
-    },
-    placeholder: "Type a continent",
-    isExpanded: true
-  });
-});
 
 var addEmemberControlAttribute = function addEmemberControlAttribute(settings) {
   settings.attributes = _objectSpread({}, settings.attributes, {
@@ -2557,8 +2535,8 @@ var ememberProtectionControlls = createHigherOrderComponent(function (BlockEdit)
 
     function filtlerOptions(setValues, setFunction) {
       setFunction(function () {
-        return _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(levels.filter(function (_ref2) {
-          var value = _ref2.value;
+        return _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_2___default()(levels.filter(function (_ref) {
+          var value = _ref.value;
           return setValues.indexOf(value) === -1;
         }));
       });
@@ -2585,29 +2563,37 @@ var ememberProtectionControlls = createHigherOrderComponent(function (BlockEdit)
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
+              _context.prev = 0;
+              _context.next = 3;
               return apiFetch({
                 path: "gepemebergutenberg/v1/levels/"
               });
 
-            case 2:
+            case 3:
               level = _context.sent;
               setLevels(level);
-              _context.next = 6;
+              _context.next = 7;
               return apiFetch({
                 path: "gepemebergutenberg/v1/members/"
               });
 
-            case 6:
+            case 7:
               member = _context.sent;
               setMembers(member);
+              _context.next = 14;
+              break;
 
-            case 8:
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context["catch"](0);
+              console.error(_context.t0);
+
+            case 14:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee);
+      }, _callee, null, [[0, 11]]);
     })), []);
     Object(react__WEBPACK_IMPORTED_MODULE_6__["useEffect"])(function () {
       if (levels.length > 0) {
@@ -2690,6 +2676,17 @@ addFilter("editor.BlockEdit", "gep/protectControlls", ememberProtectionControlls
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["regeneratorRuntime"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!*********************************************!*\
+  !*** external {"this":["wp","components"]} ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = this["wp"]["components"]; }());
 
 /***/ }),
 

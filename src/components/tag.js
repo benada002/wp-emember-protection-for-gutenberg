@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-
-const { IconButton } = wp.components;
+import { IconButton } from "@wordpress/components";
 
 class Tag extends Component {
   constructor() {

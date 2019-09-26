@@ -16,7 +16,9 @@ function gep_block_assets() { // phpcs:ignore
 	wp_enqueue_script(
         'plu-js',
         plugins_url( '/dist/index.js', __FILE__ ),
-        ['wp-compose', 'wp-hooks', 'wp-editor', 'wp-element', 'wp-components', 'wp-api-fetch']
+        ['wp-compose', 'wp-hooks', 'wp-editor', 'wp-element', 'wp-components', 'wp-api-fetch'],
+        null,
+        true
     );
 }
 add_action( 'enqueue_block_editor_assets', 'gep_block_assets' );
@@ -27,7 +29,12 @@ function gep_filter_content($content, $block){
             if(!$value || $value === ""){
                 unset($block['attrs']['ememberProtectAttrs'][$key]);
             }
+
+            if(is_array($value) && count($value) > 0){
+                $block['attrs']['ememberProtectAttrs'][$key] = implode('-', $value);
+            }
         }
+
         return emember_protected_handler(($block['attrs']['ememberProtectAttrs']), $content, $codes = '');
     }
 
