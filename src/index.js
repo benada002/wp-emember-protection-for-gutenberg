@@ -1,14 +1,18 @@
-const { addFilter } = wp.hooks;
-const { createHigherOrderComponent } = wp.compose;
-const { Fragment } = wp.element;
-const { InspectorControls } = wp.editor;
-const {
+import { useState, useEffect } from "@wordpress/element";
+import { addFilter } from '@wordpress/hooks';
+import { Fragment } from '@wordpress/element';
+import { InspectorControls } from '@wordpress/block-editor';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import {
   PanelBody,
   SelectControl,
   ToggleControl,
-  TextControl,
-  TextareaControl
-} = wp.components;
+  TextareaControl,
+  BaseControl,
+} from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+
+import MultiSelect from "./components/Select";
 
 const ememberScope = [
   { value: "", label: "Not Set" },
@@ -27,9 +31,9 @@ const addEmemberControlAttribute = settings => {
     ememberProtectAttrs: {
       type: "object",
       default: {
-        for: "",
-        not_for: "",
-        member_id: "",
+        for: [],
+        not_for: [],
+        member_id: [],
         scope: ememberScope[0].value,
         do_not_show_restricted_msg: false,
         do_not_show_expired_msg: false,
@@ -47,15 +51,47 @@ addFilter(
   addEmemberControlAttribute
 );
 
-const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
-  return props => {
+const ememberProtectionControlls = createHigherOrderComponent(
+  BlockEdit => props => {
     const { ememberProtect, ememberProtectAttrs } = props.attributes;
     const { setAttributes } = props;
+
+    const [levels, setLevels] = useState([]);
+    const [forLevels, setForLevels] = useState([]);
+    const [notForLevels, setNotForLevels] = useState([]);
+
+    function filtlerOptions(setValues, setFunction) {
+      setFunction(() => [
+        ...levels.filter(({ value }) => setValues.indexOf(value) === -1)
+      ]);
+    }
+
     function saveObject(key, value) {
       setAttributes({
         ememberProtectAttrs: { ...ememberProtectAttrs, [key]: value }
       });
     }
+
+    function saveObjectAndFilterOptions(key, value, saveFilteredOptions) {
+      saveObject(key, value);
+      filtlerOptions(value, saveFilteredOptions);
+    }
+
+    useEffect(async () => {
+      try {
+        const level = await apiFetch({ path: "gepemebergutenberg/v1/levels/" });
+        setLevels(level);
+      } catch (err) {
+        console.error(err);
+      }
+    }, []);
+
+    useEffect(() => {
+      if (levels.length > 0) {
+        filtlerOptions(ememberProtectAttrs.not_for, setForLevels);
+        filtlerOptions(ememberProtectAttrs.for, setNotForLevels);
+      }
+    }, [levels, ememberProtectAttrs]);
 
     return (
       <Fragment>
@@ -72,25 +108,37 @@ const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
               }}
             />
             {ememberProtect && (
-              <TextControl
-                label="Show for level(s)"
-                value={ememberProtectAttrs.for}
-                onChange={For => saveObject("for", For)}
-              />
+              <BaseControl label="For Levels">
+                <MultiSelect
+                  name="for-level"
+                  value={ememberProtectAttrs.for}
+                  options={forLevels}
+                  onChange={For =>
+                    saveObjectAndFilterOptions("for", For, setNotForLevels)
+                  }
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
-              <TextControl
-                label="Hide for level(s)"
-                value={ememberProtectAttrs.not_for}
-                onChange={not_for => saveObject("not_for", not_for)}
-              />
+              <BaseControl label="Hide for Levels">
+                <MultiSelect
+                  name="not-for-level"
+                  value={ememberProtectAttrs.not_for}
+                  options={notForLevels}
+                  onChange={not_for =>
+                    saveObjectAndFilterOptions("not_for", not_for, setForLevels)
+                  }
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
-              <TextControl
-                label="Show for member(s)"
-                value={ememberProtectAttrs.member_id}
-                onChange={member_id => saveObject("member_id", member_id)}
-              />
+              <BaseControl>
+                <TextareaControl
+                  label="For Members (ids separated with -)"
+                  value={ememberProtectAttrs.member_id}
+                  onChange={member => saveObject("member_id", member)}
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
               <SelectControl
@@ -125,18 +173,21 @@ const ememberProtectionControlls = createHigherOrderComponent(BlockEdit => {
               />
             )}
             {ememberProtect && (
-              <TextareaControl
-                label="Custom Message"
-                value={ememberProtectAttrs.custom_msg}
-                onChange={custom_msg => setAttributes("custom_msg", custom_msg)}
-              />
+              <BaseControl>
+                <TextareaControl
+                  label="Custom Message"
+                  value={ememberProtectAttrs.custom_msg}
+                  onChange={custom_msg => saveObject("custom_msg", custom_msg)}
+                />
+              </BaseControl>
             )}
           </PanelBody>
         </InspectorControls>
       </Fragment>
     );
-  };
-}, "ememberProtectionControlls");
+  },
+  "ememberProtectionControlls"
+);
 
 addFilter(
   "editor.BlockEdit",
