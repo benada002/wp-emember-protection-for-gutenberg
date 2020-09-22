@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { IconButton } from "@wordpress/components";
+import { Component } from "@wordpress/element";
+import { Button } from "@wordpress/components";
 
 class Tag extends Component {
   constructor() {
@@ -19,7 +19,7 @@ class Tag extends Component {
         <span className="components-form-token-field__token-text">
           <span>{this.props.element.label}</span>
         </span>
-        <IconButton
+        <Button
           className="components-form-token-field__remove-token"
           icon="dismiss"
           label={this.props.element.label}

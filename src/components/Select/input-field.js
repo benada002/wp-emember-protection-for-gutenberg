@@ -1,6 +1,6 @@
-import React, { Component, createRef } from "react";
+import { Component, createRef } from "@wordpress/element";
 import AutosizeInput from "react-input-autosize";
-import { IconButton } from "@wordpress/components";
+import { Button } from "@wordpress/components";
 
 import Tag from "./tag";
 
@@ -58,7 +58,7 @@ class InputField extends Component {
             ref={this.searchRef}
           />
         </div>
-        <IconButton
+        <Button
           icon={this.props.dropdownHide ? "arrow-down" : "arrow-up"}
           onClick={() => this.toggleDropdown()}
         />

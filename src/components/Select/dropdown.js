@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "@wordpress/element";
 
 class Dropdown extends Component {
   constructor(props) {
@@ -72,19 +72,19 @@ class Dropdown extends Component {
               id={`multi-select-${this.state.instance}-${i}`}
               className="components-form-token-field__suggestion"
               style={{
-                backgroundColor: this.state.selected === i ? "blue" : "#fff"
+                backgroundColor: this.state.selected === i ? "#e2e2e2" : "#fff"
               }}
               onClick={() => this.props.addSelectedItem(ele.value)}
               role="option"
               aria-selected={this.state.selected === i ? "true" : "false"}
             >
-              >{ele.label}
+              {ele.label}
             </li>
           ))) || (
-          <li className="components-form-token-field__suggestion">
-            Nothing Found!
-          </li>
-        )}
+            <li className="components-form-token-field__suggestion">
+              Nothing Found!
+            </li>
+          )}
       </ul>
     );
   }

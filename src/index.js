@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-
-const { addFilter } = wp.hooks;
-const { createHigherOrderComponent } = wp.compose;
-const { Fragment } = wp.element;
-const { InspectorControls } = wp.editor;
-const {
+import { useState, useEffect } from "@wordpress/element";
+import { addFilter } from '@wordpress/hooks';
+import { Fragment } from '@wordpress/element';
+import { InspectorControls } from '@wordpress/block-editor';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import {
   PanelBody,
   SelectControl,
   ToggleControl,
-  TextareaControl
-} = wp.components;
-const apiFetch = wp.apiFetch;
+  TextareaControl,
+  BaseControl,
+} from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
-import SelectControlSearch from "./components/select";
+import MultiSelect from "./components/Select";
 
 const ememberScope = [
   { value: "", label: "Not Set" },
@@ -59,7 +59,6 @@ const ememberProtectionControlls = createHigherOrderComponent(
     const [levels, setLevels] = useState([]);
     const [forLevels, setForLevels] = useState([]);
     const [notForLevels, setNotForLevels] = useState([]);
-    const [members, setMembers] = useState([]);
 
     function filtlerOptions(setValues, setFunction) {
       setFunction(() => [
@@ -82,11 +81,6 @@ const ememberProtectionControlls = createHigherOrderComponent(
       try {
         const level = await apiFetch({ path: "gepemebergutenberg/v1/levels/" });
         setLevels(level);
-
-        const member = await apiFetch({
-          path: "gepemebergutenberg/v1/members/"
-        });
-        setMembers(member);
       } catch (err) {
         console.error(err);
       }
@@ -114,35 +108,37 @@ const ememberProtectionControlls = createHigherOrderComponent(
               }}
             />
             {ememberProtect && (
-              <SelectControlSearch
-                label="For Levels"
-                name="for-level"
-                value={ememberProtectAttrs.for}
-                options={forLevels}
-                onChange={For =>
-                  saveObjectAndFilterOptions("for", For, setNotForLevels)
-                }
-              />
+              <BaseControl label="For Levels">
+                <MultiSelect
+                  name="for-level"
+                  value={ememberProtectAttrs.for}
+                  options={forLevels}
+                  onChange={For =>
+                    saveObjectAndFilterOptions("for", For, setNotForLevels)
+                  }
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
-              <SelectControlSearch
-                label="Hide for Levels"
-                name="not-for-level"
-                value={ememberProtectAttrs.not_for}
-                options={notForLevels}
-                onChange={not_for =>
-                  saveObjectAndFilterOptions("not_for", not_for, setForLevels)
-                }
-              />
+              <BaseControl label="Hide for Levels">
+                <MultiSelect
+                  name="not-for-level"
+                  value={ememberProtectAttrs.not_for}
+                  options={notForLevels}
+                  onChange={not_for =>
+                    saveObjectAndFilterOptions("not_for", not_for, setForLevels)
+                  }
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
-              <SelectControlSearch
-                label="For Members"
-                name="for-level"
-                value={ememberProtectAttrs.member_id}
-                options={members}
-                onChange={member => saveObject("member_id", member)}
-              />
+              <BaseControl>
+                <TextareaControl
+                  label="For Members (ids separated with -)"
+                  value={ememberProtectAttrs.member_id}
+                  onChange={member => saveObject("member_id", member)}
+                />
+              </BaseControl>
             )}
             {ememberProtect && (
               <SelectControl
@@ -177,11 +173,13 @@ const ememberProtectionControlls = createHigherOrderComponent(
               />
             )}
             {ememberProtect && (
-              <TextareaControl
-                label="Custom Message"
-                value={ememberProtectAttrs.custom_msg}
-                onChange={custom_msg => setAttributes("custom_msg", custom_msg)}
-              />
+              <BaseControl>
+                <TextareaControl
+                  label="Custom Message"
+                  value={ememberProtectAttrs.custom_msg}
+                  onChange={custom_msg => saveObject("custom_msg", custom_msg)}
+                />
+              </BaseControl>
             )}
           </PanelBody>
         </InspectorControls>

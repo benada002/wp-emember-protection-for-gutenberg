@@ -1,28 +1,19 @@
 {
-  "name": "pu1",
-  "version": "1.0.0",
+  "name": "wp-emember-protection-for-gutenberg",
+  "version": "2.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "wp-scripts start --output-path=dist",
-    "build": "wp-scripts build --output-path=dist",
+    "start": "wp-scripts start",
+    "build": "wp-scripts build",
     "test": "jest --watchAll"
   },
   "dependencies": {
-    "@wordpress/components": "^8.2.0",
-    "@wordpress/compose": "^3.6.0",
-    "@wordpress/editor": "^9.6.0",
-    "@wordpress/element": "^2.7.0",
-    "@wordpress/format-library": "^1.8.0",
-    "@wordpress/rich-text": "^3.6.0",
-    "cgb-scripts": "1.20.0",
-    "react-input-autosize": "^2.2.1"
+    "react-input-autosize": "^2.2.2"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@wordpress/scripts": "^4.1.0",
-    "jest": "^24.9.0"
+    "@wordpress/scripts": "^12.2.0"
   }
 }

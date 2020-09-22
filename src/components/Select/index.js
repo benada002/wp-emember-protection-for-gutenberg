@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import { Component, createRef } from "@wordpress/element";
 
 import InputField from "./input-field";
 import Dropdown from "./dropdown";
